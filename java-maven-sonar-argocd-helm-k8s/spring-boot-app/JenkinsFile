@@ -19,6 +19,10 @@ pipeline {
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
     }
+    stage(restart sonar)
+      steps {
+        sh '''
+            cd 
     stage('Static Code Analysis') {
       environment {
         SONAR_URL = "http://54.92.188.70:9000"
@@ -70,6 +74,9 @@ pipeline {
                     BUILD_NUMBER=${BUILD_NUMBER}
                     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                     git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    git status
+                    git add .
+                    git status
                     git commit -m "Update deployment image to version ${BUILD_NUMBER}"
                     git status
                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
