@@ -6,11 +6,15 @@ pipeline {
     }
   }
   stages {
-    stage('Checkout') {
+    stage('chown &chmod')
       steps {
         sh '''cd /var/lib/jenkins
 sudo chown -R jenkins:jenkins .
 sudo chmod -R 755 .'''
+      }
+}
+    stage('Checkout') {
+      steps {
         sh 'echo passed'
         //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
       }
