@@ -1,4 +1,16 @@
 pipeline {
+  agent none
+  stage('Set Permissions') {
+            agent any
+            steps {
+                script {
+                    // Set ownership and permissions for the workspace directory
+                    sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba || true'
+                    sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba || true'
+                }
+            }
+        }
+
   agent {
     docker {
       image 'abhishekf5/maven-abhishek-docker-agent:v1'
