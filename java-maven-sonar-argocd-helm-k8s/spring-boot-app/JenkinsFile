@@ -1,41 +1,6 @@
 pipeline {
     agent none
     stages {
-        stage('Set Permissions') {
-            agent any
-            steps {
-                script {
-                    // Run the chown and chmod commands on the Jenkins host
-                    sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba'
-                    sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba'
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            agent {
-                docker {
-                    image 'abhishekf5/maven-abhishek-docker-agent:v1'
-                    args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
-                }
-            }
-            stages {
-                stage('Checkout') {
-                    steps {
-                        sh 'echo passed'
-                        git branch: 'master', url: 'https://github.com/GandlaChandu/jenkinsprac.git'
-                    }
-                }
-                stage('Build and Test') {
-                    steps {
-                        sh 'ls -ltr'
-                        // build the project and create a JAR file
-                        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
-                    }
-                }
-                pipeline {
-    agent none
-    stages {
         stage('Clean Workspace') {
             agent any
             steps {
@@ -47,9 +12,9 @@ pipeline {
             agent any
             steps {
                 script {
-                    // Set ownership and permissions for the workspace directory without sudo
-                    sh 'chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba || true'
-                    sh 'chmod -R 755 /var/lib/jenkins/workspace/spba || true'
+                    // Set ownership and permissions for the workspace directory
+                    sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba || true'
+                    sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba || true'
                 }
             }
         }
@@ -66,9 +31,9 @@ pipeline {
                     steps {
                         sh 'echo passed'
                         script {
-                            // Set ownership and permissions for the .git directory without sudo
-                            sh 'chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba/.git || true'
-                            sh 'chmod -R 755 /var/lib/jenkins/workspace/spba/.git || true'
+                            // Set ownership and permissions for the .git directory
+                            sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba/.git || true'
+                            sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba/.git || true'
                         }
                         git branch: 'master', url: 'https://github.com/GandlaChandu/jenkinsprac.git'
                     }
@@ -80,23 +45,20 @@ pipeline {
                         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
                     }
                 }
-
-                stage('Static Code Analysis') {
-                    environment {
-                        SONAR_URL = "http://54.92.188.70:9000"
-                    }
-                    steps {
-                        withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
-                        }
-                    }
-                }
-                stage('Build and Push Docker Image') {
-                    environment {
-                        DOCKER_IMAGE = "gand
-
-
-                stage('Static Code Analysis') {
+                 stage('sonarqube start') {
+                   steps {
+                        sh '''
+                        whoami
+                        sudo su - sonarqube <<EOF
+cd sonarqube-9.4.0.54424/bin/linux-x86-64
+./sonar.sh  status
+./sonar.sh  start
+./sonar.sh  status
+EOF
+                '''
+            }
+        }
+                  stage('Static Code Analysis') {
                     environment {
                         SONAR_URL = "http://54.92.188.70:9000"
                     }
