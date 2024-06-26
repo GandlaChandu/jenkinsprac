@@ -6,13 +6,6 @@ pipeline {
     }
   }
   stages {
-    stage('chown &chmod'){
-      steps {
-        sh '''cd /var/lib/jenkins
-chown -R jenkins:jenkins .
-chmod -R 755 .'''
-      }
-}
     stage('Checkout') {
       steps {
         sh 'echo passed'
