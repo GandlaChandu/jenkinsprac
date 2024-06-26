@@ -23,7 +23,7 @@ pipeline {
                 stage('Checkout') {
                     steps {
                         sh 'echo passed'
-                        git branch: 'main', url: 'https://github.com/GandlaChandu/jenkinsprac.git'
+                        git branch: 'master', url: 'https://github.com/GandlaChandu/jenkinsprac.git'
                     }
                 }
                 stage('Build and Test') {
@@ -74,7 +74,7 @@ pipeline {
                 }
                 stage('Update Deployment File') {
                     environment {
-                        GIT_REPO_NAME = "Jenkinsprac"
+                        GIT_REPO_NAME = "jenkinsprac"
                         GIT_USER_NAME = "GandlaChandu"
                     }
                     steps {
@@ -82,7 +82,6 @@ pipeline {
                             sh '''
                                 git config user.email "chandugandla4092@gmail.com"
                                 git config user.name "GandlaChandu"
-                                BUILD_NUMBER=${BUILD_NUMBER}
                                 sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                                 git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                                 git status
