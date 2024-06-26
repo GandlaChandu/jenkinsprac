@@ -20,18 +20,8 @@ pipeline {
                 }
             }
             stages {
-                stage('Checkout') {
-                    steps {
-                        sh 'echo passed'
-                        script {
-                            // Set ownership and permissions for the .git directory
-                            sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba/.git || true'
-                            sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba/.git || true'
-                        }
-                        git branch: 'master', url: 'https://github.com/GandlaChandu/jenkinsprac.git'
-                    }
-                }
-                stage('Build and Test') {
+                
+                 stage('Build and Test') {
                     steps {
                         sh 'ls -ltr'
                         // build the project and create a JAR file
