@@ -6,7 +6,7 @@ pipeline {
     }
   }
   stages {
-    stage('chown &chmod')
+    stage('chown &chmod'){
       steps {
         sh '''cd /var/lib/jenkins
 sudo chown -R jenkins:jenkins .
