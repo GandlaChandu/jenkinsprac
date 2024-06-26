@@ -1,14 +1,7 @@
 pipeline {
     agent none
     stages {
-        stage('Clean Workspace') {
-            agent any
-            steps {
-                deleteDir() // Clean the workspace
-            }
-        }
-
-        stage('Set Permissions') {
+      stage('Set Permissions') {
             agent any
             steps {
                 script {
