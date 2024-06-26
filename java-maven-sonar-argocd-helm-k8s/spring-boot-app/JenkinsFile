@@ -4,7 +4,7 @@ pipeline {
         stage('Set Permissions') {
             agent any
             steps {
-                script {
+                script {   
                     // Set ownership and permissions for the workspace directory
                     sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/spba'
                     sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/spba'
